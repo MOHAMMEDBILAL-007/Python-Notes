@@ -1045,3 +1045,22 @@ win32event.WaitForSingleObject(
 )
 this worked on cmd not notepad because apperantly the new notepad doesnt work simply 
 never think that a program = a window = a process 
+
+exit code a integer value returned by a process telling the user that the process is still running or not
+when the process is still running the exit code is set to 259 (or we can use win32con.STILL_ACTIVE)
+we can get the exit code 
+win32event.GetExitCodeProcess(phandle)
+custom exit code 
+just use a command in command argument
+r'cmd.exe /c "pause & exit 25"'
+25 will be the exit code
+therefor the return value changes to 25
+we can create a waiting program using this exit codes like if exit code is equal to 259 or equal to win32con.STILL_ACTIVE
+
+next is how to end a process 
+there are 2 ways a process can terminate 
+1. a process can terminate itself
+2. or another process can terminate it
+
+windows provide a function for 2nd case 
+win32process.TerminateProcess(handle,custom exitcode)
