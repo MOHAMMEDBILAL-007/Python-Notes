@@ -99,24 +99,46 @@ import win32con
 # win32api.CloseHandle(thandle)
 # win32api.CloseHandle(phandle)
 
-phandle,thandle,pid,tid = win32process.CreateProcess(
-    None,
-    r"cmd.exe",
-    None,
-    None,
-    False,
-    win32con.CREATE_NEW_CONSOLE,
-    None,
-    None,
-    win32process.STARTUPINFO()
-)
-print("PID = ",pid)
-print("waiting for cmd to close....")
-exitcode=win32process.GetExitCodeProcess(phandle)
-print(exitcode)
-Result = win32event.WaitForSingleObject(phandle,win32event.INFINITE)
-exitcode = win32process.GetExitCodeProcess(phandle)
-print(exitcode)
-print(Result)
-win32api.CloseHandle(thandle)
-win32api.CloseHandle(phandle)
+# phandle,thandle,pid,tid = win32process.CreateProcess(
+#     None,
+#     r"cmd.exe",
+#     None,
+#     None,
+#     False,
+#     win32con.CREATE_NEW_CONSOLE,
+#     None,
+#     None,
+#     win32process.STARTUPINFO()
+# )
+# print("PID = ",pid)
+# print("waiting for cmd to close....")
+# exitcode=win32process.GetExitCodeProcess(phandle)
+# print(exitcode)
+# Result = win32event.WaitForSingleObject(phandle,win32event.INFINITE)
+# exitcode = win32process.GetExitCodeProcess(phandle)
+# print(exitcode)
+# print(Result)
+# win32api.CloseHandle(thandle)
+# win32api.CloseHandle(phandle)
+
+# phandle,thandle,pid,tid = win32process.CreateProcess(
+#     None,
+#     r'cmd.exe /c "exit 25"',
+#     None,
+#     None,
+#     False,
+#     win32con.CREATE_NEW_CONSOLE,
+#     None,
+#     None,
+#     win32process.STARTUPINFO()
+# )
+# print("PID = ",pid)
+# print("waiting for cmd to close....")
+# exitcode=win32process.GetExitCodeProcess(phandle)
+# print(exitcode)
+# Result = win32event.WaitForSingleObject(phandle,win32event.INFINITE)
+# exitcode = win32process.GetExitCodeProcess(phandle)
+# print(exitcode)
+# print(Result)
+# win32api.CloseHandle(thandle)
+# win32api.CloseHandle(phandle)
