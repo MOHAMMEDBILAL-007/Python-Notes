@@ -142,3 +142,29 @@ import win32con
 # print(Result)
 # win32api.CloseHandle(thandle)
 # win32api.CloseHandle(phandle)
+
+phandle,thandle,pid,tid=win32process.CreateProcess(
+    None,
+    r"cmd.exe",
+    None,
+    None,
+    False,
+    win32con.CREATE_NEW_CONSOLE,
+    None,
+    None,
+    win32process.STARTUPINFO()
+)
+print("pid : ",pid)
+exitcode = win32process.GetExitCodeProcess(phandle)
+print(exitcode)
+if exitcode == win32con.STILL_ACTIVE:
+    print(" process alive .....")
+    time.sleep(5)
+    print("Terminating process.....")
+    win32process.TerminateProcess(phandle,25)
+exitcode1 = win32process.GetExitCodeProcess(phandle)
+print(exitcode1)
+if exitcode1 == 25:
+    print("process terminated successfully....")
+win32api.CloseHandle(thandle)
+win32api.CloseHandle(phandle)
