@@ -1149,3 +1149,125 @@ curl.exe -0 https://imagej.net/images/2D_Gel.jpg --output something.jpg ->specif
 use curl with an api 
 curl.exe https://jsonplaceholder.typecode.com/user/1
 response contains information on a sample user
+
+other commandline utilities 
+networking utilities
+| Utility        | Purpose                                         | Example                           |
+| -------------- | ----------------------------------------------- | --------------------------------- |
+| `curl.exe`     | Transfer data using URLs                        | `curl.exe -I https://example.com` |
+| `ping.exe`     | Test network reachability                       | `ping.exe example.com`            |
+| `ipconfig.exe` | Display IP configuration                        | `ipconfig.exe`                    |
+| `tracert.exe`  | Trace the route to a destination                | `tracert.exe example.com`         |
+| `nslookup.exe` | Query DNS information                           | `nslookup.exe example.com`        |
+| `netstat.exe`  | Display network connections and listening ports | `netstat.exe -ano`                |
+| `arp.exe`      | Inspect the ARP cache                           | `arp.exe -a`                      |
+
+file directory commands 
+| Command     | Purpose                         | Example               |
+| ----------- | ------------------------------- | --------------------- |
+| `dir`       | List files in CMD or PowerShell | `dir`                 |
+| `mkdir`     | Create a directory              | `mkdir Projects`      |
+| `copy`      | Copy files in CMD               | `copy a.txt b.txt`    |
+| `move`      | Move files in CMD               | `move a.txt Projects` |
+| `del`       | Delete files in CMD             | `del a.txt`           |
+| `type`      | Display a text file in CMD      | `type notes.txt`      |
+| `where.exe` | Locate executable files         | `where.exe python`    |
+
+process and system utilities
+| Utility          | Purpose                             | Example                     |
+| ---------------- | ----------------------------------- | --------------------------- |
+| `tasklist.exe`   | List running processes              | `tasklist.exe`              |
+| `taskkill.exe`   | Terminate a process                 | `taskkill.exe /PID 1234 /F` |
+| `systeminfo.exe` | Display detailed system information | `systeminfo.exe`            |
+| `hostname.exe`   | Display the computer name           | `hostname.exe`              |
+| `whoami.exe`     | Display the current user identity   | `whoami.exe`                |
+| `shutdown.exe`   | Shut down or restart Windows        | `shutdown.exe /r /t 60`     |
+
+dev utilities
+| Utility     | Purpose                                     | Example                        |
+| ----------- | ------------------------------------------- | ------------------------------ |
+| `curl.exe`  | Test APIs                                   | `curl.exe https://example.com` |
+| `where.exe` | Find executables                            | `where.exe python`             |
+| `git`       | Version control, if Git is installed        | `git status`                   |
+| `python`    | Run Python programs, if Python is installed | `python main.py`               |
+| `winget`    | Install and manage software, if available   | `winget --version`             |
+
+finding location of an application 
+where.exe nameofapplication
+
+get-command -> gets the info on the command 
+get-command get-process-> info in getprocess command
+
+now comming to the main objective ie, build a utility using python 
+for this we use "argparse" a built-in module in python 
+without commandline argument we need to give input to a code everytime we run
+imagine we have a program to convert temperature into different units but we will give input every time 
+but if it was a utility command would look like : python temp.py 233
+this would give us the output directly 
+we are passing the ragument 223 while running the code
+
+lets write our first argparse program 
+import argparse
+parser = argparse.ArgumentParser()-> creates an object that is responsible for defining and parsing your command line interface 
+parser.add_argument("name")->this tells the cli that the user must supply an argument ie, name 
+args = parser.parse_args()->reads the command line arguments and verifies them to your rules 
+print(f"Hello, {args.name}!")
+command : python greet.py jack
+output : Hello, jack!
+command python greet.py --help ->You'll see a generated help message describing how to use the program.
+
+when we add an argument by default it is considered as a positional argument we can add multiple arguments 
+parser.add_argument("first")
+parser.add_argument("second")
+
+and there is optional arguments
+names that begins with 1 or 2 hypens'-' 
+parser.add_argument("--uppercase", action="store_true")
+action variable specifies how parser should handle the argument is encountered 
+by default it has value of  store meaning stores the value if given else none
+store_true means if argument is supplied store true else false ,store_false is the opposit of that 
+
+this is an example for how to use the optional arguments 
+parser = argparse.ArgumentParser(description="parsing the argument")
+parser.add_argument("name",help="name of the person to greet")
+parser.add_argument("--uppercase",action="store_true",help="if you need the message in uppercase")
+parser.add_argument("--output",action=)
+args = parser.parse_args()
+greet = f"hello {args.name} how are you !"
+if args.uppercase:
+    greet = greet.upper()
+print(greet)
+command : python greet.py jack --uppercase
+output : HELLO JACK HOW ARE YOU!
+command: python greet.py jack
+output: hello jack how are you!
+
+Note: help message can be used to display info about the arguments 
+
+accepting different datatypes
+using type variable  
+parser.add_argument("first",type=int,help="First integer")
+type variable has all the common datatypes along with we can use custom data types as functions ex: pathlib.path 
+
+nargs variable used to take multiple values in a single argument nargs=1 for ecactly 1 value ,"?" for 0 to 1 value "*" for 0 to more values "+" one or more values 
+default variable used to set a default value incase of no value been given 
+required variable is used to specify the requirment false or true 
+choices variable limits the user to choose from the following choices  choices=["red","blue"]
+
+proper use of argparse looks like 
+import argparse
+from pathlib import Path
+parser = argparse.ArgumentParser()
+parser.add_argument("path",type=Path,help="path of the file")
+parser.add_argument("--absolute",action="store_true",help="resolved path")
+args = parser.parse_args()
+file_path = args.path
+print(f"DEBUG - Received path: {file_path}")
+print(f"DEBUG - Absolute check: {file_path.absolute()}")
+print(f"DEBUG - Exists? {file_path.exists()}")
+print(f"DEBUG - Is file? {file_path.is_file()}")
+if not file_path.is_file():
+    parser.error(f"{args.path} file doesnt exist")
+print(file_path.stat().st_size,"bytes")
+if args.absolute:
+    print("absolute path :",file_path.resolve())
