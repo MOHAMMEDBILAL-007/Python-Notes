@@ -1064,3 +1064,88 @@ there are 2 ways a process can terminate
 
 windows provide a function for 2nd case 
 win32process.TerminateProcess(handle,custom exitcode)
+-----------------------------------------------------------------------------------------------------------------
+creating command-line utility 
+commandline utility is a program that lets you perform tasks by typing commands into the terminal insted of GUI
+
+but befor learning how to do it we need to learn what it is 
+lets start with what is a command interpreter :
+imagine you want to open a program (ex:notepad) you have 2 ways 
+1. open startmenu,search notepad,click it
+2. open shell,type notepad it opens
+now computer doesnt understand what notepad is cuz its an english word this brings us to our first concept 
+what is a command interpreter
+-> command interpreter is a program that reads commands, interprets their meaning, and arranges for them to be executed 
+command interpreter provides a way of interacting with os through text insted of GUI
+Examples of interpreters in windows:
+CMD
+PowerShell
+(for linux its Bash)
+
+CMD vs PowerShell
+what is cmd?
+it stands for command prompt
+it uses windows command interpreter,treditionally identified by cmd.exe
+it is useful for basic file operations, running programs and executing batch scripts
+its scripting system uses .bat or .cmd files
+what is powershell?
+it is a shell and a scripting environment developed by microsoft
+it has more powerful automation and system administration capabilities
+it can retrive informatiuon about running process 
+(Get-Process)
+(Get-process | Where-object{$_.WorkingSet64 -gt 500MB} gets process whos working memory exceeds 500mb
+its scripting system uses .ps1
+
+difference between cmd and powershell
+| Feature                  | CMD                           | PowerShell                                       |
+| ------------------------ | ----------------------------- | ------------------------------------------------ |
+| Executable               | `cmd.exe`                     | `powershell.exe` or `pwsh.exe`                   |
+| Primary purpose          | Traditional command execution | Automation and system administration             |
+| Typical commands         | `dir`, `copy`, `del`          | `Get-ChildItem`, `Copy-Item`, `Remove-Item`      |
+| Scripting                | `.bat`, `.cmd`                | `.ps1`                                           |
+| Pipeline data            | Primarily text                | Structured objects                               |
+| Programming capabilities | Basic batch scripting         | Advanced scripting, functions, and data handling |
+| Windows administration   | Useful for basic tasks        | Extensive administration capabilities            |
+| Cross-platform support   | Primarily Windows             | PowerShell 7+ supports Windows, Linux, and macOS |
+They are separate command interpreters, but they can both run inside the same terminal application.
+terminal provides interface to both of them 
+
+now comming back to the topic 
+what is a command-line utility?
+often known as CLI tool or Utility
+is a stand alone software program designed to perform specific focused tasks through a text-based interface rather than GUI
+
+what is the difference between interpreter and command-line utility?
+interpreter reads the command and process the command
+utility is a program designed to perform an operation through a CLI ie, cmd or powershell or bash 
+note: where.exe application name -> used to find the path of the application
+example : builtin windows utilities
+curl, ping, ipconfig, tracert, nslookup, netstat, arp etc...
+
+what exactly is curl ?
+curl is a command-line tool for transfering data from servers using URLs
+it supports http,https,ftp
+first curl command
+curl.exe https://example.com
+you will see html content in response inside your terminal
+
+inspect the response header
+curl.exe -I https://example.com 
+returns something like 
+HTTP/1.1 200 OK
+Date: Mon, 12 Oct 2026 08:17:47 GMT
+Content-Type: text/html; charset=utf-8
+Connection: keep-alive
+Server: cloudflare
+last-modified: 
+allow: GET, HEAD
+Accept-Ranges: bytes
+Age: 2
+
+download a file 
+curl.exe -0 https://imagej.net/images/2D_Gel.jpg this specific file is a binary image so its not feasible to display in terminal
+curl.exe -0 https://imagej.net/images/2D_Gel.jpg --output something.jpg ->specifying the output type 
+
+use curl with an api 
+curl.exe https://jsonplaceholder.typecode.com/user/1
+response contains information on a sample user
