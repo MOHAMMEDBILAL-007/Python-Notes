@@ -1306,3 +1306,29 @@ elif args.command == "list":
     print("Listing tasks...")
 elif args.command == "remove":
     print(f"Removing task: {args.task_id}")
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+walrus operator
+syntax 
+:=
+it is a small feature but makes code much cleaner 
+it lets you assign a value to a variable inside an expression 
+you cannot assign value in an expression in python 
+like 
+a = False
+print(a=True) this will rais a syntax error 
+but insted of using assignment operator if we use walrus operator we can assign a value inside of an expression
+print(a:=True) this will work this will change the orignal value too 
+not just here it will work in many complex situations and make our operations much easier and clean and readable 
+
+for ex:
+without walrus operator 
+while True:
+    text = input("Enter something (or 'quit'): ")
+    if text == "quit":
+        break
+    print(text)
+	
+but using walrus operator you can cut it down to
+while(text :=input("enter something or quit"))!=quit:
+	print(text)
+you see 5 lines of code cut down to 2 lines
