@@ -1332,3 +1332,33 @@ but using walrus operator you can cut it down to
 while(text :=input("enter something or quit"))!=quit:
 	print(text)
 you see 5 lines of code cut down to 2 lines
+----------------------------------------------------------------------------------------------------------------------------------------
+shutil module 
+it is a builtin module shutil stands for shell utilities 
+it performs high level file operations copies moves directries and files it is different from os, win32file, open()
+
+os intercts with os directly to operate on directries
+win32file uses system level calls/functions to operate on files and directries
+open() is used to operate the content of the following text file 
+
+shutil operates on high level it is direct and straight forward 
+shutil cannot open, read, extract, merge, split or modify the internal contents 
+for copying a file
+shutil.copy("source","destination")
+one more syntax for copy ie
+shutil.copy2("source.txt", "destination.txt")
+in this situation it tries to preserve as much as metadata possible
+
+copy an entair directory
+shutil.copytree("project", "project_backup")
+copies entair directries 
+
+move a file and directries
+shutil.move("source.txt", "backup/source.txt")
+shutil.move("project", "archive/project")
+
+check the disk usage
+usage = shutil.disk_usage("C:\\")
+print("Total:", usage.total)
+print("Used:", usage.used)
+print("Free:", usage.free)
