@@ -1200,6 +1200,8 @@ get-command get-process-> info in getprocess command
 
 now comming to the main objective ie, build a utility using python 
 for this we use "argparse" a built-in module in python 
+
+what is a parser : a piece of code or software that takes raw unstructured input and breaks it down into a structured format that computer program can understand, validate and use
 without commandline argument we need to give input to a code everytime we run
 imagine we have a program to convert temperature into different units but we will give input every time 
 but if it was a utility command would look like : python temp.py 233
@@ -1271,3 +1273,36 @@ if not file_path.is_file():
 print(file_path.stat().st_size,"bytes")
 if args.absolute:
     print("absolute path :",file_path.resolve())
+
+subparsers:
+a parser associated with a subcommand of a parent command  
+ex command:python tool.py add "Study Python"-> here add selects a subcommand that subcommand can have its own argument
+code ex:
+import argparse
+# 1. Create the main parser,ie parent parser 
+parser = argparse.ArgumentParser(
+    description="A task management utility")
+# 2. Enable subcommands(collects subparsers) creates mechanism for sub commands
+subparsers = parser.add_subparsers(dest="command", required=True)# dest is just a name for where the sub commands are stored 
+# 3. Define the add command
+add_parser = subparsers.add_parser("add")
+add_parser.add_argument(
+    "description",
+    help="Description of the task")
+# 4. Define the list command
+list_parser = subparsers.add_parser("list")
+# 5. Define the remove command
+remove_parser = subparsers.add_parser("remove")
+remove_parser.add_argument(
+    "task_id",
+    type=int,
+    help="ID of the task")
+# 6. Parse the command-line arguments
+args = parser.parse_args()
+# 7. Execute the selected operation
+if args.command == "add":
+    print(f"Adding task: {args.description}")
+elif args.command == "list":
+    print("Listing tasks...")
+elif args.command == "remove":
+    print(f"Removing task: {args.task_id}")
