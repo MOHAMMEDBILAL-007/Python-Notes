@@ -1065,6 +1065,7 @@ there are 2 ways a process can terminate
 windows provide a function for 2nd case 
 win32process.TerminateProcess(handle,custom exitcode)
 -----------------------------------------------------------------------------------------------------------------
+python 85
 creating command-line utility 
 commandline utility is a program that lets you perform tasks by typing commands into the terminal insted of GUI
 
@@ -1307,6 +1308,7 @@ elif args.command == "list":
 elif args.command == "remove":
     print(f"Removing task: {args.task_id}")
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+python 86
 walrus operator
 syntax 
 :=
@@ -1333,6 +1335,7 @@ while(text :=input("enter something or quit"))!=quit:
 	print(text)
 you see 5 lines of code cut down to 2 lines
 ----------------------------------------------------------------------------------------------------------------------------------------
+python 87
 shutil module 
 it is a builtin module shutil stands for shell utilities 
 it performs high level file operations copies moves directries and files it is different from os, win32file, open()
@@ -1362,3 +1365,73 @@ usage = shutil.disk_usage("C:\\")
 print("Total:", usage.total)
 print("Used:", usage.used)
 print("Free:", usage.free)
+---------------------------------------------------------------------------------------------------------------------------------------------
+python 89
+requests module 
+it is library that allows python programs to authenticate, sessions, headers, timeouts, and error handeling
+when a client sends a request to a server, it uses HTTP methods or HTTP verbs to indicate the desaired action it wants the server to perform on a resource 
+the primary requests are:
+GET  -> asks server to send back a representation of a specific resource
+POST -> sends data to a server to create a new resource 
+PUT  -> sends data to update an entair existing resource, or create if it doesn't already exist 
+PATCH-> applies partial modification to a resource 
+DELETE-> requests the server to remove the specific resource
+
+secondary requests:
+HEAD -> identical to get request but server returns only the headers without the response body
+OPTIONS -> asks the server what communication options or HTTP methods are available
+TRACE -> performs a loop back test along the path to the target resource 
+CONNECT -> establishs a tunnel to the server identified by the target resource 
+
+requests module helps the program handle https or http request to the server 
+starting with get request:
+response = requests.get("https://jsonplaceholder.typicode.com/post/1")
+print(response.status_code)
+print(response.text)
+OUTPUT:
+200
+{
+  "userId": 1,
+  "id": 1,
+  "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
+  "body": "quia et suscipit..."
+}
+
+here 200 is status code
+
+http status codes :
+| Status code                 | Meaning                              |
+| --------------------------- | ------------------------------------ |
+| `200 OK`                    | Request succeeded                    |
+| `201 Created`               | Resource created successfully        |
+| `400 Bad Request`           | Request was invalid                  |
+| `401 Unauthorized`          | Authentication is missing or invalid |
+| `403 Forbidden`             | Server refuses the operation         |
+| `404 Not Found`             | Resource not found                   |
+| `429 Too Many Requests`     | Too many requests were made          |
+| `500 Internal Server Error` | Server encountered an error          |
+
+lets understand the response object 
+when we execute requests.get(....) it returns an object containing several attributes 
+| Attribute or method           | Purpose                                        |
+| ----------------------------- | ---------------------------------------------- |
+| `response.status_code`        | HTTP status code                               |
+| `response.text`               | Response body as text                          |
+| `response.content`            | Response body as bytes (useful when need to parse images)|
+| `response.json()`             | Decode a JSON response                         |
+| `response.headers`            | Response headers                               |
+| `response.url`                | Final URL of the response                      |
+| `response.encoding`           | Text encoding used to decode the body          |
+| `response.raise_for_status()` | Raise an exception for HTTP error status codes |
+
+we can provide parameters to an url if required
+requests.get(URL,params)
+params 's' because URLs may require multiple parameters 
+
+when ever we request a page it usually returns in html text interface 
+we can use bs4 module beutiful soup this will help in maintaining the structure of a text 
+useful while scraping through internet or need to document the code in a file in tree or structured format
+
+response.json() suppose the server returns in json format 
+
+like this if the server provides other actions such as post, put, patch, delete etc....
