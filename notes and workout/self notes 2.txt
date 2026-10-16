@@ -1640,3 +1640,44 @@ def fibonacci(n):
     return fibonacci(n - 1) + fibonacci(n - 2)
 the lowerlevel functions will already be in the cach so the calculations will be fast
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+python 93
+how to hide your api keys
+application programming interface -> API
+API allows different applications to talk to each other without needing to know how the other one is built
+An API key is like a digital ID card or password that proves who you are when you talk to that API.
+whenever we are using an api key in a project if we ned to deploy the project wether in github or in a server we need to hide those api keys 
+so that no one else imporsonates us to access the api 
+the cleanest way to store your api keys outside code and load it through an environment vaiable
+we use .env file and add it to .gitignore
+
+for example your structure should look like this 
+
+WeatherApp/
+│
+├── main.py
+├── .env
+├── .gitignore
+├── .env.example
+└── requirements.txt
+store the api key in .env file like this
+WEATHER_API_KEY=your_actual_api_key
+then add .env to .gitignore
+your gitignore file should looklike 
+.env
+.env.*
+!.env.example
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+
+but python cannot directly read .env file so we use python-dotenv module 
+and use it in code like 
+import os
+import dotenv
+dotenv.load_dotenv()
+apikey = os.getenv("WEATHER_API_KEY")
+------------------------------------------------------------------------------------------------------------------------
+python 95
+regular expressions
+in mathematics and theoretical computer science a regular expression is a formal notation used to describe a set of strings
