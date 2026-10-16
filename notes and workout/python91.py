@@ -1,11 +1,13 @@
-# def mygenerator():
-#     for i in range(1001):
-#         yield i
-# gen = mygenerator()
+def mygenerator():
+    for i in range(1001):
+        yield i
+gen = mygenerator()
+print(list(gen))
+# print(list(gen))
 # print(next(gen))
 # print(next(gen))
-# for i in gen:
-#     print(i,end =",")# this will continue after theabobe 2 next functions meaning it will start from 2
+for i in gen:
+    print(i,end =",")# this will continue after theabobe 2 next functions meaning it will start from 2
 
 # def levelgenerator(totaldamage,kills,magicused,clevel,requirments):
 #     i=clevel

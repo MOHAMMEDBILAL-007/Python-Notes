@@ -1463,3 +1463,50 @@ we are not generating all the values at once we are generating them on the fly
 we can create generators using yield statement in a finction 
 yield function returns the value and suspends the execution of the function untill the next value is requested
 generators are considered lazy meaning they generate values only when they are requested
+we can use the object that we create of the functuon as a iteratable object 
+thing is that it stores the state of the function every time it executes (it remembers its execution state)
+after the execution is complited there will be nothing left in the object so if we use next() on the same obj it will rais an error ,if we iterate on that same objest it won't
+so one object is useable completely only once 
+aside from using yield in a function we can create generators in expressions 
+square=(x*x for x in range(5))
+this will be exhausted too after one use 
+dont get confuse that it will generate tuple of elements for that 
+t = tuple(x * x for x in range(5))
+if we have a generator on a list if we append new value to the list before exhausting the generator it will include the newly added element too
+because it is a lazy operation so it will not generate at a time it will wait fir to be called
+we can also use from keyword 
+to call yield from other generator ex:
+def numbers():
+    yield 1
+    yield 2
+def combined():
+    yield 0
+    yield from numbers()
+    yield 3
+print(list(combined()))
+we are able to yield values from other generators 
+output: [0,1,2,3]
+
+we a see different behavior when we assign a variable a yield value 
+
+def inner():
+    yield 10
+    yield 20
+
+def outer():
+    x = yield from inner()
+    yield x
+
+print(list(outer()))
+output:[10, 20, None]
+yield from inner() yields 10 then it yields 20 since it is a function the variable expects a return value it has no return function so None
+but if we had a return function 
+def inner():
+    yield 10
+    yield 20
+    return 99
+def outer():
+    x = yield from inner()
+    yield x
+print(list(outer()))
+output: [10, 20, 99]
