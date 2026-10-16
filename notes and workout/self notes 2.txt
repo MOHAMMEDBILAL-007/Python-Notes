@@ -1457,3 +1457,9 @@ with requests.Session() as session:
 --------------------------------------------------------------------------------------------------------------------------------------------
 python 91
 generators in python 
+are special types of functions that allow you to create an iteratable sequence of values .
+a generator function returns aa generator object , which can be used to generate values one by one as you traverse 
+we are not generating all the values at once we are generating them on the fly
+we can create generators using yield statement in a finction 
+yield function returns the value and suspends the execution of the function untill the next value is requested
+generators are considered lazy meaning they generate values only when they are requested
