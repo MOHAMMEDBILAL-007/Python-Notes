@@ -1510,3 +1510,132 @@ def outer():
     yield x
 print(list(outer()))
 output: [10, 20, 99]
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+python 92
+function caching
+function caching is technique used to improve the perfomence of the function 
+by storing the results of a function calls so that it can be reuse the results insted of recalculating them every time the function is called 
+
+import functools
+import time
+@functools.lru_cache(maxsize=None)
+def expensive_function(n):
+	print("calculating function")
+    time.sleep(5)
+    return n*5
+print(expensive_function(5))
+print(expensive_function(2))
+print(expensive_function(4))
+#calling these again they wont wait for 5 sec every time because the results are stored in cache
+print(expensive_function(5))
+print(expensive_function(2))
+print(expensive_function(4))
+
+OUTPUT:
+calculating function
+25
+calculating function
+10
+calculating function
+20
+25
+10
+20
+
+if max size is not given then its considered as 'None', meaning there is no limit except the hardware limit 
+python does not store the function values in the cache by default it does it explicitly when we use lru_cache
+even if the the same function with same attributes is being called the function wull be executed completely without storing them 
+so we have to use lru_cache from functools 
+in the above example we saw that while reusing the values the functions didnot exicute at all 
+they skipped the execution because the function calls were same and used before 
+conceptually the cache behaves like a dictionary 
+cache = {
+    5: 25
+}
+expensive_function(5) for 5 and 52 as the output 
+
+LRU stands for least recent used 
+if we make a function with lru cashe enabled and with a limited max size lets say maxsize=3
+so if we called the function3 times with different attributes then the limit will be fullfilled 
+so if we introduced a new attribute the least recent used attribute will be removed from the cashe memory
+from functools import lru_cache
+
+@lru_cache(maxsize=3)
+def square(n):
+    print(f"Calculating {n}")
+    return n * n
+print(square(2))
+print(square(4))
+print(square(6))
+#function will be executed fully for above 3
+#the cache dictionary ={2:4,4:16,6:36}
+print(square(2))
+print(square(4))
+print(square(6))
+#function will not be executed the same attributes are being used 
+print(square(8))
+# now the least recent attribute function used was 2 so to will be kicked and 8 will be added
+#the cache dictionary ={4:16,6:36,8:64} now the least recent attribute function is 4 so whatever we call next aside from those in the cache memory it will replace 4
+
+OUTPUT:
+Calculating 2
+4
+Calculating 4
+16
+Calculating 6
+36
+4
+16
+36
+Calculating 8
+64
+
+like this we can configure cache size 
+but a function can depend on external factors so we need to be careful when using lru_cache
+this method is not recommended when the function has several external factors that may alter the result even with same attribute 
+this can cause major problems even the output should be different it will produce the same output without executing 
+counter = 0
+def get_counter():
+    global counter
+    counter += 1
+    return counter
+print(get_counter())  # 1
+print(get_counter())  # 2
+print(get_counter())  # 3
+if we use function caching here it will always print 1 it wont change 
+another example:
+from functools import lru_cache
+x = 10
+@lru_cache
+def calculate(n):
+    return n + x
+print(calculate(5))
+x = 100
+print(calculate(5))
+15
+15
+this will be a problem because python doesent look for external factors so it will just see the attributes and use hashlookup in the cache and just returns the value 
+Every value that can affect a cached function's result should be accounted for in its cache key.
+
+while using mutable objects as attributes its not recommended to use lru_cache it cause error because mutable objects like lists are unhashable
+even if you typecast them to be hashable its not recommended because the mutated object is considered different 
+cache is not maintained permanently it refreshes everytime you run a program 
+python uses hashlookup to check in the cashe memory 
+so if we print(expensive_function.cache_info())
+it will print :
+CacheInfo(hits=1, misses=1, maxsize=128, currsize=1)
+hits: Number of calls served by the cache.
+misses: Number of calls that required executing the original function.
+maxsize: Maximum cache size.
+currsize: Current number of cached entries.
+to clear the cache we use expensive_function.cache_clear()
+returning a mutable value is allowed return values does not need to be hasahable
+common cases of using lru_cache is when using recursive algorithms like fibonacci series
+from functools import lru_cache
+@lru_cache(maxsize=None)
+def fibonacci(n):
+    if n < 2:
+        return n
+
+    return fibonacci(n - 1) + fibonacci(n - 2)
+	
