@@ -1435,3 +1435,25 @@ useful while scraping through internet or need to document the code in a file in
 response.json() suppose the server returns in json format 
 
 like this if the server provides other actions such as post, put, patch, delete etc....
+
+we can use timeout attribute to determine when the session should terminate 
+response = requests.get(
+        "https://jsonplaceholder.typicode.com/posts/1",
+        timeout=10)
+
+sessions: reusing connections and state
+suppose you are making 100s of requests we can just use directly but using session is more convenient for reuse of the resources
+with requests.Session() as session:
+    response1 = session.get(
+        "https://jsonplaceholder.typicode.com/posts/1",
+        timeout=10
+    )
+    response2 = session.get(
+        "https://jsonplaceholder.typicode.com/posts/2",
+        timeout=10
+    )
+    print(response1.status_code)
+    print(response2.status_code)
+--------------------------------------------------------------------------------------------------------------------------------------------
+python 91
+generators in python 
