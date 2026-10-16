@@ -1,2 +1,2 @@
-# Python-study
-including notes
+# Python-Notes
+including codes
