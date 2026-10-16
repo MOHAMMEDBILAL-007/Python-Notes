@@ -1681,3 +1681,107 @@ apikey = os.getenv("WEATHER_API_KEY")
 python 95
 regular expressions
 in mathematics and theoretical computer science a regular expression is a formal notation used to describe a set of strings
+lets start with something simple suppose we have an alphabet 
+Σ ={a,b}
+Σ represents the symbols we are allowed to use 
+it means using these symbols we can construct a string
+a,b,ab,ba,bb,aa,bba,aab,aba,bab......
+a language is a set of strings constructer from alphabet
+for example
+L={a,ab,abb,abbb.......}
+this language contains strings that begin with a followed by zero or more b symbols
+insted of writing every possible combination we  can describe the entair language using a regular expression: ab*
+here * has aspecial mathematical meaning ie 0 or more repetations of the preceding expression 
+classic regular expression are built using 3 fundamental operations 
+*union 
+*concatination 
+*kleene star 
+
+union: choosing between alternatves 
+L1 = {a}
+L2 = {b}
+union of L1 and L2 ie, L1∪L2 = {a,b}
+in regex we represent them like this a|b 
+meaning a or b 
+
+concatination: joining experessions 
+R1 = a
+R2 = b 
+their concatinatination produces ab
+if 
+R1​={a,aa}
+R2​={b,bb}
+R1R2={ab,abb,aab,aabb}
+
+kleene star : zero or more repetations 
+R=a
+kleen star of R will be R*
+therefore a*
+L(a*) =(a,aa,aaa,aaaa,......}
+
+examples :
+all strings containing only a:a*
+accepted strings=ε, a, aa, aaa, aaaa,...
+rejected strings = ab,bb,aba,bba,.....
+
+strings containing 1 a and followed by 1 b :ab
+accepted strings = ab
+rejected strings = a,b,aaa,bba,aba,aaab....
+
+strings containing any number of a followed by any number of b :a*b*
+acccepted strings = empty string,a,b,ab,abb,aab,aaabbb,aaaabbb....
+rejected strings = aba,bab,ba,aaabbaba......
+
+strings containing any number of a or b :(a|b)*
+accepted strings = empty string, a,b,aa,bb,ab,aab,aba,bab,bba,bbaabb,aabbaa....
+
+strings starting with a and end with b :a(a|b)*b
+accepted strings = ab,aab,abb,aabb,abbb,aaaab.....
+rejected strings = a,b,ab,aba,bab......
+
+what is a regular language?
+a regular language is a language that can be described by a classical regular expression
+there is another equivalent way to charecterize regular languages they can be recognised by a finite automata
+this is where regular expression connect to automata theory 
+
+finite automata 
+is a mathematical machine with
+*A finite set of states
+*an input alphabet
+*transitions between states
+*an initial state
+*one or more accepting states
+
+consider a machine that recognize strings ending in a
+its alphabets is:
+Σ={a,b}
+we need 2 states 
+q0 strind currently ends in a 
+q1 string currently doesnot end in a 
+    b               a
+  /---\          /---\
+  |   ↓    a     ↓   |
+  \--q0<=======>q1---/
+           b
+
+| Current state | Input `a` | Input `b` |
+| ------------- | --------- | --------- |
+| q0            | q1        | q0        |
+| q1            | q1        | q0        |
+
+there is perticularly important mathematical limitation.
+consider the language 
+L={a^nb^n ∣ n≥0}
+it consists of strings such as :
+ab,aabb,aaabbb,aaaabbbb.......
+every string contsins same number of a and b 
+no clasic re can describe this language.
+A finite automaton has only finitely many states.
+It cannot remember an arbitrarily large count of a symbols 
+and then verify that precisely the same number of b symbols follow.
+It can be recognized by a pushdown automaton, which has a stack.
+an important distinction for python 
+Python's re module implements a practical regular-expression engine 
+with features such as backreferences and lookarounds.
+Python's re does not support arbitrary recursive patterns, 
+and it cannot generally recognize languages such as a^n b^n for arbitrary n.
