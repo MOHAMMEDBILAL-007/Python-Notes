@@ -1756,8 +1756,8 @@ consider a machine that recognize strings ending in a
 its alphabets is:
 Σ={a,b}
 we need 2 states 
-q0 strind currently ends in a 
-q1 string currently doesnot end in a 
+q1 string currently ends in a 
+q0 string currently doesnot end in a 
     b               a
   /---\          /---\
   |   ↓    a     ↓   |
@@ -1785,3 +1785,49 @@ Python's re module implements a practical regular-expression engine
 with features such as backreferences and lookarounds.
 Python's re does not support arbitrary recursive patterns, 
 and it cannot generally recognize languages such as a^n b^n for arbitrary n.
+| Symbol   | Meaning                                        | Example   |
+| -------- | ---------------------------------------------- | --------- |
+| `.`      | Any character except newline by default        | `a.c`     |
+| `^`      | Beginning of string, or line in multiline mode | `^Hello`  |
+| `$`      | End of string, or line in multiline mode       | `world$`  |
+| `*`      | Zero or more repetitions                       | `ab*`     |
+| `+`      | One or more repetitions                        | `ab+`     |
+| `?`      | Zero or one repetition                         | `colou?r` |
+| `{n}`    | Exactly `n` repetitions                        | `a{3}`    |
+| `{n,m}`  | Between `n` and `m` repetitions                | `a{2,4}`  |
+| `[]`     | Character class                                | `[abc]`   |
+| `[^...]` | Negated character class                        | `[^0-9]`  |
+| `\d`     | Digit in Python's Unicode-aware default mode   | `\d+`     |
+| `\w`     | Word character                                 | `\w+`     |
+| `\s`     | Whitespace character                           | `\s+`     |
+| `\b`     | Word boundary                                  | `\bcat\b` |
+| `\|`     | Literal vertical bar when escaped              | `a\|b`    |
+
+
+Note: using R or r in fromt of a string means its a raw string
+pattern is usally a RE 
+we use match function just to verify the occurance of the pattern in the very begining of the string
+we use fullmatch to verify wether the entair string matches a RE from beginning to end 
+we can use search function to search the first occurance of the pattern 
+we can use finditer to get all the occurances of the pattern 
+we use findall to get all matches that match the RE 
+use() to group the expressions we can access the individual groups using .group() function group 0 means entair matched text
+we use sub() function to the matched strings with the desaired element or string
+
+greedy matching vs lazy matching:
+example
+text = "<tag>hello</tag><tag>world</tag>"
+print(re.findall(r"<.*>", text))
+OUTPUT:['<tag>hello</tag><tag>world</tag>']
+by default .* is greedy so to solve this we use 
+print(re.findall(r"<.*?>", text))
+OUTPUT:['<tag>', '<tag>', '</tag>', '<tag>', '</tag>']
+
+
+1) Garbage Collection
+2) Destructor Method
+3) RegX
+4) Multi-Threading
+5) Unit -Testing
+6) Debugging Funda
+7) Pickling
