@@ -1822,12 +1822,96 @@ OUTPUT:['<tag>hello</tag><tag>world</tag>']
 by default .* is greedy so to solve this we use 
 print(re.findall(r"<.*?>", text))
 OUTPUT:['<tag>', '<tag>', '</tag>', '<tag>', '</tag>']
+----------------------------------------------------------------------------------------------------------------------------------------
+python 96
+AsyncIO
+asyncio is a python library that allows us to execute multiple operations concurrently without necessarily using multiple threads or process 
+its primarily designed for i/o bound operations 
+Note : there are 2 types of work a program performs 
+	1. CPU bound operations
+		these operations requires significant cpu processing
+		Examples:
+		- Training a neural network.
+		- Performing image processing.
+		- Calculating mathematical operations.
+		- Processing large datasets.
+		- Running complex algorithms.
+	2. i/o bound operations 
+		in these operations program spends significant time waiting for some external
+		Examples:
+		- Downloading a file.
+		- Sending an HTTP request to an API.
+		- Receiving a response from a server.
+		- Reading data from a network connection.
+		- Communicating with a database.
+example of how asyncio works :
+program sends request to a server, but server takes 3s to respond 
+during these 3 seconds your program is waiting 
+thats where asyncio becomes usefull 
+insted of waiting and sitting idle, asyncio allows it to work on other tasks while orignal is waiting 
+the official python document describes asyncio as a library for writing concurrent code using async and await
+so we donot use asyncio for cpu bound tasks because there is no await 
+
+how does asyncio actually works? 
+to understand it we need to learn what is an event loop, it is the central component of asyncio 
+event loop is a scheduler responsible for managing asynchronus taske 
+Python uses the Global Interpreter Lock (GIL), which ensures that only one native thread executes Python bytecode at a time. 
+Because asyncio is designed for single-threaded cooperative multitasking, everything in an event loop runs on that single main thread.
+Here's what happens internally:
+1. A coroutine starts executing.
+2. It reaches an await that needs to wait for an operation.
+3. It suspends its execution.
+4. The event loop schedules other tasks that are ready to execute.
+5. When the awaited operation completes, the event loop resumes the suspended coroutine.
+this is called cooperative multitasking 
+An important distinction: a normal asyncio event loop executes one task at a time in its thread. 
+It achieves concurrency by switching between tasks, not by executing their Python instructions simultaneously.
+
+understanding async and await 
+1. async is a keyword used to define an asynchronus function 
+async def greet():
+    print("Hello")
+compare it with a normal function 
+def greet():
+    print("Hello")
+difference is that calling an asynchronus function doesnt immedietly mean it executes the body 
+if we call async function we will gwt a coroutine object 
+a coroutine is a object representing an asynchronus operation that can be awaited or scheduled 
+
+2. await keyword tells python to wait for awaitable operation to complete
+async def greet():
+    print("Hello")
+    await asyncio.sleep(2)
+    print("Welcome!")
+
+await asyncio.sleep(2) this suspends the current corutine while the timer runs 
+then the event loop can use that time to execute other tasks 
+
+what is asyncio.run(main()) in the code file 
+asyncio.run() does the following:
+1. Creates an event loop.
+2. Runs the supplied coroutine.
+3. Waits for it to finish.
+4. Closes the event loop.
+
+important distinction between parallelism and concurrency 
+| Feature         | Concurrency             | Parallelism 							  |
+|-----------------|-------------------------|-----------------------------------------|
+| Meaning         | Managing multiple tasks | Executing multiple tasks simultaneously |
+| asyncio         | Yes     				| Not by default 						  |
+| Multithreading  | Yes 					| Depends on the workload and runtime 	  |
+| Multiprocessing | Yes 					| Yes 									  |
+
+what are coroutines and coroutine objects 
+an async function is a coroutine function 
+object of an async function is coroutine object 
+Python created a coroutine object but didn't execute its body.
+This object represents an asynchronous operation that hasn't started running yet.
+Think of it as an operation waiting to be executed.
 
 
 1) Garbage Collection
 2) Destructor Method
-3) RegX
-4) Multi-Threading
-5) Unit -Testing
-6) Debugging Funda
-7) Pickling
+3) Unit -Testing
+4) Debugging Funda
+5) Pickling
