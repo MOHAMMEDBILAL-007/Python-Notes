@@ -1875,7 +1875,7 @@ compare it with a normal function
 def greet():
     print("Hello")
 difference is that calling an asynchronus function doesnt immedietly mean it executes the body 
-if we call async function we will gwt a coroutine object 
+if we call async function we will get a coroutine object 
 a coroutine is a object representing an asynchronus operation that can be awaited or scheduled 
 
 2. await keyword tells python to wait for awaitable operation to complete
@@ -1903,12 +1903,222 @@ important distinction between parallelism and concurrency
 | Multiprocessing | Yes 					| Yes 									  |
 
 what are coroutines and coroutine objects 
+a coroutine is a specialized function that can pause its execution, 
+yield control back to its caller (or an event loop), and later resume right where it left off.
+While a regular function is a subroutine with a single entry point and a single exit point (via return),
+ a coroutine has multiple entry and exit points.
 an async function is a coroutine function 
 object of an async function is coroutine object 
+there are two ways to execute an coroutine object using asyncio.run(function()/coroutine_object) or use await coroutine_object 
 Python created a coroutine object but didn't execute its body.
 This object represents an asynchronous operation that hasn't started running yet.
 Think of it as an operation waiting to be executed.
 
+event loop and asyncio.create_task()
+event looping is responsible for scheduling and managing asynchronus operations 
+Its primary responsibilities include:
+1. Scheduling coroutines.
+2. Managing tasks.
+3. Monitoring operations that are waiting for I/O.
+4. Resuming coroutines when their awaited operations are ready.
+5. Handling task completion and cancellation.
+
+problem with just using await and asyncio.run is that we haven't scheduled coroutines to use the awaiting time 
+so we use asyncio.create_task()
+it schedules coroutines as asyncio task 
+now the event loop can switch between the tasks while other awaits 
+
+coroutine = task1()
+task = asyncio.create_task(task1())
+coroutine is a coroutine object.
+task is an asyncio Task.
+Creating a task schedules it, but doesn't necessarily execute it immediately.
+| Feature                | Coroutine                 | Task                    |
+|------------------------|---------------------------|-------------------------|
+| Created using          | `async def` function call | `asyncio.create_task()` |
+| Executes automatically | No                        | Scheduled to execute    |
+| Managed by event loop  | When awaited or scheduled | Yes                     |
+| Can be awaited         | Yes                       | Yes                     |
+| Represents             | An asynchronous operation | A scheduled coroutine   |
+lets think of a scinario where we create tasks to be scheduled but we don't have await for the tasks the main will execute but it will finish without awaiting for the task 
+main() is responsible for the awaiting of the tasks but it finishes before doing any thing so the scheduled tasks will not execute
+
+task life cycle 
+an asyncio task generally goes through these stages 
+       CREATED
+          |
+          v
+      SCHEDULED
+          |
+          v
+        RUNNING
+          |
+          v
+       WAITING
+          |
+          v
+        RUNNING
+          |
+          v
+      COMPLETED
+tasks can also be cancelled before completion Introducing task.cancle()
+it requests cancellation of task 
+lets understand how it works using an example :
+import asyncio
+async def download():
+    print("Download started")
+    try:
+        await asyncio.sleep(4)
+        print("Download completed")
+    except asyncio.CancelledEror:
+        print("Download interrupted!")
+async def main():
+    task = asyncio.create_task(download())
+    await asyncio.sleep(2)
+    task.cancel()
+    print("Cancellation requested")
+    await task
+    print("Main completed")
+asyncio.run(main())
+output :
+Download started
+Cancellation requested
+Download interrupted!
+Main completed
+
+now lets understand in detail
+task.cancle() requests cancellation of the task
+does cancellation happen immedietly NO 
+python requests the cancellation it doesnt forcibly terminate the task 
+Instead, asyncio arranges for a CancelledError to be thrown into the coroutine
+when it gets an opportunity to resume
+explaining how we got the output 
+Download starts.
+Main sleeps for 2 seconds.
+Main requests cancellation.
+Main prints Cancellation requested.
+Main awaits the cancelled task.
+The download coroutine receives CancelledError.
+Its exception handler prints Download interrupted!.
+The coroutine finishes normally because it handled the exception without re-raising it.
+Main continues and prints Main completed.
+Why await a cancelled task?
+We await the task for three important reasons:
+1. To ensure cancellation has been processed.
+Calling task.cancel() only requests cancellation.
+Awaiting the task allows us to wait until the cancellation has actually been processed.
+2. To retrieve the task's final result or exception.
+If cancellation propagates, awaiting the task raises asyncio.CancelledError.
+If the coroutine handles cancellation and returns normally, awaiting it returns normally.
+3. To prevent unmanaged background tasks.
+We want to know when our asynchronous operations have actually finished.
+This is important in production applications.
+there are 2 ways that we can use CancelledError
+1. cancellation reraised : cancellation reraises to whoever awaits the task 
+2. cancelaltion suppressed : cancellation is handled and suppressed 
+Best practice: Generally, perform any necessary cleanup and re-raise CancelledError.
+Suppressing cancellation should be intentional.
+
+asyncio.gather()
+lets consider a program needs to retrieve information from multiple different external sources ex: APIs
+we can create ayncronus tasks to complete these operations concurrently using asyncio.create_task()
+but it looks complicated to create multiple tasks for each coroutine/operation 
+this is where asyncio.gather() comes in 
+What is asyncio.gather()?
+asyncio.gather() allows us to run multiple awaitable objects concurrently and collect their results.
+basic syntax :
+await asyncio.gather(
+    coroutine1(),
+    coroutine2(),
+    coroutine3()
+)
+it automatically schedules coroutine arguments as tasks 
+the task completion may be different but the result that we store will be in the same order as we give to gather 
+What happens when one task raises an exception?
+by default when any task raises an error it is propogated to the caller
+we can handel the exceptions from the caller 
+but we also have to avoide stopping of other tasks because asyncio.run() will terminate if there is an exception 
+this is where we use return_exceptions = True  
+Instead of propagating the exception immediately, gather() returns the exceptions as elements(exception objects) of the results list.
+difference between 
+| Feature 				| create_task() 						 | gather() 					  |
+|-----------------------|----------------------------------------|--------------------------------|
+| Purpose 				| Schedules a coroutine 	 			 | Coordinates multiple awaitables|
+| Number of coroutines 	| One per call		 		 			 | Multiple 					  |
+| Returns 				| Task object 				 			 | Future-like aggregate object   |
+| Collects results 	   	| Individually through await 			 | Returns results as a list 	  |
+| Concurrent execution 	| Possible with multiple scheduled tasks | Yes 		   					  |
+
+asyncio.TaskGroup :
+it provides a structured way to create and manage multiple asynchronus tasks 
+similar to gather group tasks is also one approach 
+lets understand the new syntax 
+async with asyncio.TaskGroup() as tg 
+this creats an asynchronus context manager 
+it establishes a task group taht will manage the life cycles created inside it 
+tg.create_task()
+These schedule coroutines as Tasks belonging to the group.
+You don't need to individually await each task.
+When execution leaves the async with block, TaskGroup waits for all its tasks to finish.
+This is one of its biggest advantages.
+exception handeling is different from gather here if one task fails the task group will request cancellation of other tasks 
+and the error will be propogated as exception group 
+Understanding ExceptionGroup
+TaskGroup can have multiple tasks that raise exceptions.
+Python groups those exceptions together into an ExceptionGroup.
+You can handle them using: except* ValueError as error:(It is used to handle matching exceptions inside an ExceptionGroup.)
+| Feature 										 | gather()							| TaskGroup 				|
+|------------------------------------------------|----------------------------------|---------------------------|
+| Concurrent execution 				 			 | Yes 				 				| Yes 						|
+| Automatically schedules coroutines 			 | Yes 				 				| Yes, using `create_task()`|
+| Returns results as a list 		 			 | Yes 				 				| No	 					|
+| Waits for submitted tasks			 			 | Yes, when awaited 				| Yes, on context exit 	    |
+| Cancels sibling tasks on ordinary task failure | No 				 				| Yes  						|
+| Exception handling 							 | Propagates exceptions by default | Uses ExceptionGroup 		|
+| Structured concurrency 						 | No 				 				| Yes 						|
+When should you use each?
+Use gather() when:
+- You want to execute multiple independent operations.
+- You want their results collected in a list.
+- You want to control how exceptions are handled.
+Use TaskGroup when:
+- You want related tasks managed together.
+- You want predictable task lifecycles.
+- You want sibling tasks cancelled when one fails.
+- You want structured concurrency.
+Neither is universally better. Choose based on your requirements.
+
+asyncio.wait()
+it allows us to wait for multiple tasks based on specific completion conditions 
+Syntax
+done, pending = await asyncio.wait(
+    tasks,
+    return_when=asyncio.FIRST_COMPLETED
+)
+return_when supports 3 conditions 
+A. asyncio.ALL_COMPLETED
+B. asyncio.FIRST_COMPLETED
+C. asyncio.FIRST_EXCEPTION(If no task raises an exception, it behaves like ALL_COMPLETED.)
+done: A set containing tasks that have completed when wait() returns.
+pending: A set containing tasks that haven't completed yet.
+The other tasks are not automatically cancelled when we use FIRST_COMPLETED.
+They continue running.
+If you want them to finish, you must continue managing them LIKE 
+await asyncio.gather(*pending)
+NOTE: Also, task.result() retrieves the result of a completed task. If that task raised an exception, calling result() raises that exception.
+| Feature 							  | gather() 		| wait() 			  |
+|-------------------------------------|-----------------|---------------------|
+| Concurrent execution 				  | Yes 		   	| Yes 				  |
+| Returns results 					  | Yes, as a list 	| No, returns two sets|
+| Wait for all tasks 				  | Yes, by default | Yes, by default 	  |
+| Wait for first completed task 	  | No 				| Yes 				  |
+| Wait for first exception 			  | No 				| Yes 				  |
+| Automatically cancels pending tasks | No 				| No 				  |
+When should you use wait()?
+Imagine a search application querying multiple servers.
+You want to retrieve the first available response rather than waiting for every server.
+FIRST_COMPLETED can help with this.
+Another example is a monitoring application where you want to detect the first task that reports an error.
 
 1) Garbage Collection
 2) Destructor Method
